@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV Analytics Tool - Vanilla JS</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📊</text></svg>">
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <h1>CSV Analytics Tool</h1>
+            <button id="themeToggle" aria-label="Toggle Light/Dark Theme">
+                <span class="icon-sun">☀️</span>
+                <span class="icon-moon" style="display:none;">🌙</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="container">
+        <section id="csvUploaderSection" class="card" aria-labelledby="csvUploaderHeading">
+            <h2 id="csvUploaderHeading">1. Unggah & Proses CSV</h2>
+            <div class="csv-uploader-container">
+                <label for="csvFile" class="drop-area" id="dropArea">
+                    <p>Seret & lepas file CSV di sini, atau klik untuk memilih file.</p>
+                    <p class="drop-area-indicator" style="display:none;">Lepaskan file!</p>
+                    <input type="file" id="csvFile" accept=".csv" aria-describedby="fileUploadHelp">
+                    <p id="fileName" class="file-name-display"></p>
+                </label>
+                <small id="fileUploadHelp">Kolom wajib: Item Id, Category, Title, Published Date, Total Earnings ($USD), Earnings Change.</small>
+            </div>
+            <div id="uploadStatus" role="status" aria-live="polite"></div>
+        </section>
+
+        <section id="filterOptionsSection" class="card collapsible" aria-labelledby="filterOptionsHeading">
+            <button class="collapsible-trigger" aria-expanded="false" aria-controls="filterOptionsContent">
+                <h2 id="filterOptionsHeading">2. Opsi Filter (Klik untuk Buka/Tutup)</h2>
+                <span class="collapsible-icon">+</span>
+            </button>
+            <div id="filterOptionsContent" class="collapsible-content">
+                <div class="filter-group">
+                    <label for="searchTerm">Pencarian (Judul/Kategori):</label>
+                    <input type="search" id="searchTerm" placeholder="Masukkan kata kunci...">
+                </div>
+                <div class="filter-group date-range-group">
+                    <div>
+                        <label for="startDate">Tanggal Mulai:</label>
+                        <input type="date" id="startDate">
+                    </div>
+                    <div>
+                        <label for="endDate">Tanggal Akhir:</label>
+                        <input type="date" id="endDate">
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <label for="categoryFilter">Filter Kategori:</label>
+                    <select id="categoryFilter">
+                        <option value="">Semua Kategori</option>
+                        </select>
+                </div>
+                <button id="applyFiltersButton">Terapkan Filter</button>
+                <button id="clearFiltersButton" class="secondary">Bersihkan Filter</button>
+            </div>
+        </section>
+
+        <section id="interactiveTableSection" class="card collapsible" aria-labelledby="interactiveTableHeading">
+            <button class="collapsible-trigger" aria-expanded="true" aria-controls="interactiveTableContent">
+                <h2 id="interactiveTableHeading">3. Tabel Data Interaktif (Klik untuk Buka/Tutup)</h2>
+                <span class="collapsible-icon">-</span>
+            </button>
+            <div id="interactiveTableContent" class="collapsible-content expanded">
+                <div class="table-controls">
+                    <label for="itemsPerPage">Item per Halaman:</label>
+                    <select id="itemsPerPage">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                </div>
+                <div class="table-wrapper">
+                    <table id="interactiveDataTable">
+                        <thead></thead>
+                        <tbody id="dataTableBody"></tbody>
+                    </table>
+                </div>
+                <div id="tableStatus" role="status" aria-live="polite"></div>
+                <div id="paginationContainer" role="navigation" aria-label="Pagination"></div>
+            </div>
+        </section>
+
+        <section id="summaryStatsSection" class="card" aria-labelledby="summaryStatsHeading">
+            <h2 id="summaryStatsHeading">4. Statistik Ringkasan</h2>
+            <div class="stats-grid" id="statsGridContainer">
+                <div class="stat-card" id="totalItemsCard"><h3>Total Items</h3><p class="stat-value" id="totalItemsValue">-</p><span class="stat-icon">📦</span></div>
+                <div class="stat-card" id="totalEarningsCard"><h3>Total Earnings</h3><p class="stat-value" id="totalEarningsValue">-</p><span class="stat-icon">💰</span></div>
+                <div class="stat-card" id="taxAmountCard"><h3>Tax Amount (15%)</h3><p class="stat-value" id="taxAmountValue">-</p><span class="stat-icon">💸</span></div>
+                <div class="stat-card" id="afterTaxCard">
+                    <h3>After Tax</h3>
+                    <p class="stat-value" id="afterTaxValue">-</p>
+                    <span class="stat-icon">🧾</span>
+                </div>
+                <div class="stat-card" id="categoriesCountCard"><h3>Categories Count</h3><p class="stat-value" id="categoriesCountValue">-</p><span class="stat-icon">🏷️</span></div>
+            </div>
+        </section>
+
+        <section id="dataVisualizationSection" class="card collapsible" aria-labelledby="dataVisualizationHeading">
+            <button class="collapsible-trigger" aria-expanded="false" aria-controls="dataVisualizationContent">
+                <h2 id="dataVisualizationHeading">5. Visualisasi Data (Klik untuk Buka/Tutup)</h2>
+                <span class="collapsible-icon">+</span>
+            </button>
+            <div id="dataVisualizationContent" class="collapsible-content">
+                <div class="chart-row">
+                    <div class="chart-container chart-half-width">
+                        <canvas id="yearlyEarningsChart" aria-label="Yearly Earnings Chart" role="img"></canvas>
+                    </div>
+                     <div class="chart-container chart-half-width">
+                        <canvas id="categoryDistributionChart" aria-label="Category Earnings Distribution Chart" role="img"></canvas>
+                    </div>
+                </div>
+                <div class="chart-container" style="margin-top: 2rem;">
+                    <canvas id="topArtboardsChart" aria-label="Top Artboards by Earnings Chart" role="img"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="advancedAnalyticsSection" class="card collapsible" aria-labelledby="advancedAnalyticsHeading">
+            <button class="collapsible-trigger" aria-expanded="false" aria-controls="advancedAnalyticsContent">
+                <h2 id="advancedAnalyticsHeading">6. Analytics Lanjutan (Klik untuk Buka/Tutup)</h2>
+                <span class="collapsible-icon">+</span>
+            </button>
+            <div id="advancedAnalyticsContent" class="collapsible-content">
+                <div class="analysis-block">
+                    <h3>Peringkat Kategori (Berdasarkan Total Pendapatan)</h3>
+                    <div class="table-wrapper">
+                        <table id="topCategoriesByEarningsTable">
+                            <thead>
+                                <tr>
+                                    <th>Peringkat</th>
+                                    <th>Nama Kategori</th>
+                                    <th>Total Pendapatan ($USD)</th>
+                                    <th>Jumlah Item</th>
+                                    <th>Rata-rata</th>
+                                </tr>
+                            </thead>
+                            <tbody id="topCategoriesByEarningsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+                <div class="analysis-block">
+                    <h3>Top 30 Performing Items (Berdasarkan Total Pendapatan Keseluruhan)</h3>
+                    <div class="scrollable-table-wrapper sticky-header-table">
+                        <table id="topItemsTable">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Title</th>
+                                    <th>Category</th>
+                                    <th>Total Earnings ($USD)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="topItemsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+
+                <div class="analysis-block">
+                    <h3>Top 30 Item dengan Kenaikan Pendapatan Tertinggi</h3>
+                    <div class="scrollable-table-wrapper">
+                        <table id="topPositiveChangeItemsTable">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Title</th>
+                                    <th>Category</th>
+                                    <th>Perubahan Pendapatan ($USD)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="topPositiveChangeItemsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+
+                <div class="analysis-block">
+                    <h3>Top Artboard/Keyword (Berdasarkan Total Pendapatan)</h3>
+                    <div class="table-wrapper">
+                        <table id="topArtboardsTable">
+                            <thead>
+                                <tr>
+                                    <th>Peringkat</th>
+                                    <th>Artboard/Keyword (Klik untuk Detail)</th>
+                                    <th>Jumlah Item</th>
+                                    <th>Total Pendapatan ($USD)</th>
+                                    <th>Average ($USD)</th> 
+                                </tr>
+                            </thead>
+                            <tbody id="topArtboardsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="analysis-block">
+                    <h3>LIST NAME ITEM NO POPULAR</h3>
+                    <div class="no-popular-table-wrapper">
+                        <table id="noPopularItemsTable">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Nama Item</th>
+                                    <th>Kategori</th>
+                                    <th>Earning ($USD)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="noPopularItemsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="dataExportSection" class="card" aria-labelledby="dataExportHeading">
+            <h2 id="dataExportHeading">7. Ekspor Data</h2>
+            <div class="export-options">
+                <label for="exportType">Pilih tipe data untuk diekspor:</label>
+                <select id="exportType">
+                    <option value="all">Semua Data Terfilter</option>
+                    <option value="topItems">Top Items (Overall Earnings)</option>
+                    <option value="categoryStats">Statistik Performa Kategori</option>
+                    <option value="topChangeItems">Top Items (Earnings Change)</option>
+                    <option value="topArtboards">Top Artboards (by Earnings)</option>
+                    </select>
+                <button id="exportCsvButton">Ekspor ke CSV</button>
+                <button id="exportJsonButton">Ekspor ke JSON</button>
+                </div>
+            <div id="exportStatus" role="status" aria-live="polite"></div>
+        </section>
+
+    </main>
+
+    <div id="itemDetailsModal" class="modal" role="dialog" aria-labelledby="modalTitle" aria-modal="true" style="display:none;">
+        <div class="modal-content">
+            <button id="closeModalButton" class="modal-close-button" aria-label="Close Modal">&times;</button>
+            <h3 id="modalTitle">Detail Item</h3>
+            <div id="modalBody" class="modal-body"></div>
+        </div>
+    </div>
+    <div id="loadingOverlay" class="loading-overlay" style="display:none;" role="alert" aria-live="assertive">
+        <div class="spinner"></div>
+        <p>Memproses...</p>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; <span id="currentYear"></span> CSV Analytics Tool. Dibuat dengan Vanilla JS.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
+
+    <script src="uiSetup.js"></script>
+    <script src="dataLogic.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

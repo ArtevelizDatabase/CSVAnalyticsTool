@@ -1,0 +1,892 @@
+/* Basic Reset & Global Styles */
+:root {
+    --font-family-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    --font-family-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+
+    /* Light Theme (Default) */
+    --background-color: #f4f7f9;
+    --text-color: #333;
+    --card-background: #ffffff;
+    --card-border: #e0e0e0;
+    --primary-color: #007bff;
+    --primary-color-hover: #0056b3;
+    --primary-text-color: #ffffff;
+    --secondary-color: #6c757d;
+    --secondary-color-hover: #545b62;
+    --input-background: #fff;
+    --input-border: #ced4da;
+    --input-focus-border: #80bdff;
+    --button-disabled-bg: #e9ecef;
+    --button-disabled-text: #6c757d;
+    --link-color: #007bff;
+    --hover-effect-duration: 0.1s; 
+    --hover-timing-function: ease; 
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -1px rgba(0,0,0,0.04);
+    --table-hover-bg: rgba(0,123,255,.1); 
+    --table-header-hover-bg: #e9ecef;
+    --table-stripe-bg: rgba(0, 123, 255, 0.03); /* Lighter stripe for light theme */
+    --sublist-bg: #f9f9f9;
+    --text-hover-color: #0056b3; 
+    --bg-hover: #e9f3ff;         
+    --border-hover: #007bff;     
+    --focus-shadow-color: rgba(0,123,255,.25);
+    --focus-visible-shadow-color: rgba(0,123,255,.15);
+    --hover-element-shadow-color: rgba(0,123,255,0.08);
+}
+
+[data-theme="dark"] {
+    --background-color: #0F172A; /* Dark Slate Blue (e.g., Tailwind slate.900) */
+    --text-color: #E2E8F0;       /* Light Slate Grey (e.g., Tailwind slate.200) */
+    --card-background: #1E293B;  /* Slate Blue (e.g., Tailwind slate.800) */
+    --card-border: #334155;      /* Medium Slate Blue (e.g., Tailwind slate.700) */
+    
+    --primary-color: #38BDF8;    /* Vibrant Sky Blue (e.g., Tailwind sky.500) */
+    --primary-color-hover: #0EA5E9; /* Darker Sky Blue (e.g., Tailwind sky.600) */
+    --primary-text-color: #0F172A; /* Dark Slate Blue for text on primary buttons */
+
+    --secondary-color: #64748B;     /* Slate Grey (e.g., Tailwind slate.500) */
+    --secondary-color-hover: #475569; /* Darker Slate Grey (e.g., Tailwind slate.600) */
+
+    --input-background: #1E293B;  /* Same as card background */
+    --input-border: #475569;      /* Darker Slate Grey for input borders */
+    --input-focus-border: var(--primary-color); 
+    
+    --button-disabled-bg: #334155;    /* Medium Slate Blue */
+    --button-disabled-text: #94A3B8;  /* Lighter Slate Grey */
+    
+    --link-color: var(--primary-color); 
+    
+    --table-hover-bg: rgba(56, 189, 248, 0.1);  /* Primary color with low opacity */
+    --table-header-hover-bg: #334155;        /* Medium Slate Blue */
+    --table-stripe-bg: rgba(56, 189, 248, 0.07); /* Primary color with low opacity for stripes */
+
+    --sublist-bg: #161E2C; /* Slightly darker than card bg for depth */
+    
+    --text-hover-color: #7DD3FC;    /* Lighter Sky Blue (e.g., Tailwind sky.400) */
+    --bg-hover: rgba(56, 189, 248, 0.07); /* Subtle blue for generic hover backgrounds */
+    --border-hover: var(--primary-color); 
+
+    --focus-shadow-color: rgba(56, 189, 248, 0.25); 
+    --focus-visible-shadow-color: rgba(56, 189, 248, 0.2);
+    --hover-element-shadow-color: rgba(56, 189, 248, 0.1);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-family-sans);
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    transition: background-color 0.15s var(--hover-timing-function);
+    padding-bottom: 70px; 
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* Header */
+header {
+    background-color: var(--card-background);
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--card-border);
+    box-shadow: var(--shadow-sm);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    transition: background-color 0.15s var(--hover-timing-function), border-color var(--hover-effect-duration) var(--hover-timing-function);
+}
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+header h1 {
+    color: var(--primary-color);
+    font-size: 1.8rem;
+    transition: color var(--hover-effect-duration) var(--hover-timing-function);
+}
+#themeToggle {
+    background: none;
+    border: 1px solid var(--card-border);
+    color: var(--text-color);
+    padding: 0.5rem;
+    width: 40px; 
+    height: 40px; 
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color var(--hover-effect-duration) var(--hover-timing-function), 
+                border-color var(--hover-effect-duration) var(--hover-timing-function), 
+                transform 0.1s var(--hover-timing-function);
+}
+#themeToggle:hover {
+    background-color: var(--background-color); 
+    transform: none;
+}
+
+
+/* Main Content & Cards */
+main {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+.card {
+    background-color: var(--card-background);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-md);
+    transition: none; 
+}
+.card h2, .card h3 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    font-weight: 600;
+    transition: color var(--hover-effect-duration) var(--hover-timing-function);
+}
+.collapsible-trigger h2 {
+    margin-bottom: 0;
+}
+
+
+/* Forms & Buttons */
+input[type="file"],
+input[type="text"],
+input[type="search"],
+input[type="date"],
+select {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    border: 1px solid var(--input-border);
+    border-radius: 4px;
+    background-color: var(--input-background);
+    color: var(--text-color);
+    font-size: 1rem;
+    transition: border-color var(--hover-effect-duration) var(--hover-timing-function), 
+                box-shadow var(--hover-effect-duration) var(--hover-timing-function),
+                background-color var(--hover-effect-duration) var(--hover-timing-function),
+                color var(--hover-effect-duration) var(--hover-timing-function);
+}
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--input-focus-border);
+    box-shadow: 0 0 0 0.2rem var(--focus-shadow-color);
+}
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+button {
+    background-color: var(--primary-color);
+    color: var(--primary-text-color);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background-color 0.15s var(--hover-timing-function);
+    margin-right: 0.5rem;
+    margin-top: 0.5rem;
+    line-height: 1.5; 
+}
+button:hover:not(:disabled) {
+    transform: none;
+    background-color: var(--primary-color-hover);
+}
+button:active:not(:disabled) {
+    transform: translateY(-1px); 
+}
+button:disabled {
+    background-color: var(--button-disabled-bg);
+    color: var(--button-disabled-text);
+    cursor: not-allowed;
+}
+button.secondary { 
+    background-color: var(--secondary-color);
+}
+button.secondary:hover:not(:disabled) {
+    background-color: var(--secondary-color-hover);
+}
+
+/* CSV Uploader */
+.csv-uploader-container { margin-bottom: 1rem; }
+.drop-area {
+    border: 2px dashed var(--input-border);
+    border-radius: 4px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color var(--hover-effect-duration) var(--hover-timing-function), background-color var(--hover-effect-duration) var(--hover-timing-function);
+}
+.drop-area:hover { 
+    border-color: var(--primary-color);
+}
+.drop-area.dragover {
+    border-color: var(--primary-color);
+    background-color: rgba(0,123,255,.05); /* Kept original for light theme, will be subtle enough for dark */
+}
+[data-theme="dark"] .drop-area.dragover {
+    background-color: rgba(56, 189, 248, 0.05); /* Use dark theme primary for dragover */
+}
+.drop-area input[type="file"] {
+    display: none;
+}
+.file-name-display {
+    margin-top: 0.5rem;
+    font-style: italic;
+    color: var(--secondary-color);
+}
+
+/* Collapsible Sections */
+.collapsible .collapsible-trigger {
+    background: none;
+    border: none;
+    padding: 0.5rem 0; 
+    width: 100%;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    color: var(--primary-color);
+    border-bottom: 1px solid transparent; 
+}
+
+/* Hover styles for collapsible trigger elements are handled by global hover rules */
+
+.collapsible .collapsible-trigger h2 { margin-bottom: 0; transition: color var(--hover-effect-duration) var(--hover-timing-function); }
+.collapsible-icon {
+    font-size: 1.5rem;
+    transition: transform 0.3s var(--hover-timing-function), color var(--hover-effect-duration) var(--hover-timing-function);
+}
+.collapsible .collapsible-trigger[aria-expanded="true"] .collapsible-icon {
+    transform: rotate(45deg);
+}
+.collapsible-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease;
+    padding-top: 0;
+    padding-bottom: 0;
+    opacity: 0;
+}
+.collapsible-content.expanded {
+    max-height: 7000px; 
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    opacity: 1;
+}
+
+/* Filter Groups */
+.filter-group { margin-bottom: 1rem; }
+.date-range-group {
+    display: flex;
+    gap: 1rem;
+}
+.date-range-group > div { flex: 1; }
+
+
+/* Summary Stats */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+.stat-card {
+    background-color: var(--background-color); 
+    padding: 1rem;
+    border-radius: 6px;
+    border: 1px solid var(--card-border);
+    text-align: center;
+    transition: transform 0.1s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+.stat-card:hover {
+    transform: translateY(-3px); 
+    box-shadow: var(--shadow-md);
+    background-color: var(--card-background); 
+}
+.stat-card h3 {
+    font-size: 1rem;
+    color: var(--secondary-color);
+    margin-bottom: 0.5rem;
+}
+.stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+.stat-icon {
+    font-size: 1.5rem;
+}
+
+/* Table Controls (e.g., items per page) */
+.table-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; 
+    margin-bottom: 1rem;
+}
+.table-controls label {
+    margin-bottom: 0; 
+}
+.table-controls select {
+    width: auto; 
+    margin-bottom: 0; 
+}
+
+/* Data Table (General) */
+.table-wrapper {
+    overflow-x: auto; 
+    margin-bottom: 1rem;
+    border: 1px solid var(--card-border); 
+    border-radius: 6px;
+}
+table { 
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+table th, table td {
+    border-bottom: 1px solid var(--card-border); 
+    padding: 0.75rem;
+    text-align: left;
+    transition: background-color var(--hover-effect-duration) var(--hover-timing-function), color var(--hover-effect-duration) var(--hover-timing-function);
+}
+table td:first-child, table th:first-child {
+    padding-left: 1rem; 
+}
+table td:last-child, table th:last-child {
+    padding-right: 1rem; 
+}
+
+table th {
+    background-color: var(--background-color); 
+    -webkit-user-select: none;
+    user-select: none; 
+    position: relative; 
+    font-weight: 600; 
+    border-top: 1px solid var(--card-border); 
+}
+
+#interactiveDataTable th { 
+    cursor: pointer;
+}
+#interactiveDataTable th:hover {
+    background-color: var(--table-header-hover-bg);
+}
+#interactiveDataTable th .sort-indicator {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.8em;
+}
+table tbody tr { 
+    transition: background-color var(--hover-effect-duration) var(--hover-timing-function);
+    background-color: transparent;
+    will-change: auto; /* Keep if performance is an issue, otherwise can remove */
+}
+table tbody tr:hover {
+    background-color: var(--table-hover-bg);
+    /* text color hover handled by global rule */
+    transition: none;
+}
+#interactiveDataTable tbody tr.clickable-row { cursor: pointer; }
+
+/* Table Row Striping */
+table tbody tr:nth-child(odd) {
+    background-color: var(--table-stripe-bg);
+}
+table tbody tr:nth-child(even) {
+    background-color: transparent; /* Explicitly transparent for even rows */
+}
+
+
+/* Expandable Artboard Row Styling */
+.expandable-artboard-row {
+    cursor: pointer;
+}
+.expandable-artboard-row .expand-icon {
+    display: inline-block;
+    width: 1.2em; 
+    text-align: center;
+    transition: transform 0.2s var(--hover-timing-function);
+    font-weight: bold;
+    margin-right: 5px;
+    color: var(--primary-color); 
+}
+.artboard-items-sublist td {
+    background-color: var(--sublist-bg);
+    padding: 10px 15px 10px 20px; 
+    border-top: 1px dashed var(--input-border);
+    border-bottom: 1px solid var(--card-border); 
+}
+/* [data-theme="dark"] .artboard-items-sublist td is already handled by --sublist-bg */
+.artboard-items-sublist ul {
+    list-style-type: disc;
+    margin: 0;
+    padding-left: 25px; 
+}
+.artboard-items-sublist li {
+    padding: 3px 0;
+    font-size: 0.875em; 
+    color: var(--text-color); 
+}
+
+
+/* Pagination */
+#paginationContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap; 
+    margin-top: 1rem;
+    gap: 0.25rem; 
+}
+#paginationContainer button {
+    margin: 0; 
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+}
+#paginationContainer button.current-page {
+    background-color: var(--primary-color-hover); 
+    color: var(--primary-text-color);
+    transform: none; 
+    font-weight: bold;
+}
+#paginationContainer span { margin: 0 0.5rem; }
+
+/* Export Section */
+.export-options {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    z-index: 1050;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.7); /* Slightly darker backdrop for better focus */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.3s var(--hover-timing-function);
+}
+[data-theme="dark"] .modal {
+    background-color: rgba(15, 23, 42, 0.8); /* Dark slate backdrop */
+}
+.modal-content {
+    background-color: var(--card-background);
+    margin: auto;
+    padding: 20px;
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    width: 80%;
+    max-width: 600px;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0,0,0,.3);
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    transform: scale(0.95); 
+    opacity: 0; 
+    animation: modalEnter 0.3s var(--hover-timing-function) forwards;
+}
+@keyframes modalEnter {
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+.modal-body {
+    overflow-y: auto; 
+}
+.modal-close-button {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: var(--secondary-color);
+    background: none;
+    border: none;
+    padding: 0;
+    line-height: 1;
+    transition: color var(--hover-effect-duration) var(--hover-timing-function);
+}
+
+/* Loading Overlay */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(244, 247, 249, 0.85); /* Light theme background with opacity */
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.3s var(--hover-timing-function);
+}
+[data-theme="dark"] .loading-overlay {
+    background-color: rgba(15, 23, 42, 0.85); /* Dark theme background (slate.900) with opacity */
+}
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1); /* Keep spinner base light for contrast on both themes */
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border-left-color: var(--primary-color); /* Spinner active part uses primary color */
+    animation: spin 1s ease-in-out infinite; 
+    margin-bottom: 1rem;
+}
+[data-theme="dark"] .spinner {
+    border: 4px solid rgba(226, 232, 240, 0.1); /* Lighter base for dark theme spinner */
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Advanced Analytics Section Enhancements */
+#advancedAnalyticsContent .analysis-block {
+    padding: 1.5rem;
+    border: 1px solid var(--input-border); 
+    border-radius: 6px;
+    margin-top: 1.5rem;
+    background-color: var(--background-color); 
+    transition: box-shadow var(--hover-effect-duration) var(--hover-timing-function), border-color var(--hover-effect-duration) var(--hover-timing-function);
+}
+#advancedAnalyticsContent .analysis-block:first-child {
+    margin-top: 0.5rem; 
+}
+#advancedAnalyticsContent .analysis-block:hover {
+    border-color: var(--card-border);
+    box-shadow: var(--shadow-sm);
+}
+#advancedAnalyticsContent .analysis-block h3 {
+    margin-bottom: 1rem;
+    font-size: 1.1rem; 
+    border-bottom: 1px solid var(--input-border);
+    padding-bottom: 0.5rem;
+}
+
+
+/* Footer */
+footer {
+    background-color: var(--card-background);
+    color: var(--secondary-color);
+    text-align: center;
+    padding: 1rem 0;
+    border-top: 1px solid var(--card-border);
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    font-size: 0.9rem;
+    z-index: 900; 
+    transition: background-color var(--hover-effect-duration) var(--hover-timing-function), border-color var(--hover-effect-duration) var(--hover-timing-function);
+}
+
+/* Accessibility */
+.sr-only { 
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+*:focus-visible {
+    outline: 2px solid var(--border-hover);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 0.2rem var(--focus-visible-shadow-color);
+}
+
+/* Chart specific placeholder styling */
+.chart-container {
+    position: relative;
+    height: 350px; 
+    width: 100%;
+    margin-bottom: 1rem;
+}
+.chart-container p.chart-error-message,
+.chart-container canvas + p { 
+    text-align: center;
+    padding: 2rem;
+    color: var(--secondary-color);
+    font-style: italic;
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    header h1 { font-size: 1.5rem; }
+    .stats-grid { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+    .date-range-group { flex-direction: column; gap: 0.5rem; } 
+    .export-options { flex-direction: column; align-items: stretch; }
+    .export-options button, .export-options select { width: 100%; margin-right: 0; }
+    .modal-content { width: 95%; }
+    #advancedAnalyticsContent .analysis-block { padding: 1rem; }
+    .collapsible .collapsible-trigger { padding: 0.25rem 0; } 
+}
+
+@media (max-width: 480px) {
+    button { padding: 0.6rem 1rem; font-size: 0.9rem; }
+    #paginationContainer button { padding: 0.4rem 0.6rem; font-size: 0.8rem; }
+    .stat-value { font-size: 1.6rem; }
+    .card { padding: 1rem; }
+    #advancedAnalyticsContent .analysis-block h3 { font-size: 1rem; }
+}
+
+/* Status Message Styling */
+.status-message {
+    padding: 0.75rem;
+    margin-top: 1rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.3s var(--hover-timing-function);
+    border: 1px solid transparent;
+}
+.status-message.info {
+    background-color: #e7f3fe; /* Light blue bg */
+    border-color: #b3d7f9; /* Light blue border */
+    color: #31708f;        /* Dark blue text */
+    opacity: 1;
+}
+.status-message.success {
+    background-color: #dff0d8; /* Light green bg */
+    border-color: #d0e9c6; /* Light green border */
+    color: #3c763d;        /* Dark green text */
+    opacity: 1;
+}
+.status-message.error {
+    background-color: #f2dede; /* Light red bg */
+    border-color: #ebcccc; /* Light red border */
+    color: #a94442;        /* Dark red text */
+    opacity: 1;
+}
+
+[data-theme="dark"] .status-message.info {
+    background-color: #1E3A8A; /* Darker blue (e.g. Tailwind blue.800 as base) */
+    border-color: #2563EB;    /* Brighter blue border (e.g. Tailwind blue.600) */
+    color: #BFDBFE;           /* Light blue text (e.g. Tailwind blue.200) */
+}
+[data-theme="dark"] .status-message.success {
+    background-color: #065F46; /* Darker green (e.g. Tailwind emerald.800 as base) */
+    border-color: #10B981;    /* Brighter green border (e.g. Tailwind emerald.500) */
+    color: #A7F3D0;           /* Light green text (e.g. Tailwind emerald.200) */
+}
+[data-theme="dark"] .status-message.error {
+    background-color: #991B1B; /* Darker red (e.g. Tailwind red.800 as base) */
+    border-color: #EF4444;    /* Brighter red border (e.g. Tailwind red.500) */
+    color: #FECACA;           /* Light red text (e.g. Tailwind red.200) */
+}
+
+
+/* Scrollable table for no popular items */
+.no-popular-table-wrapper {
+    max-height: calc(30 * 2.5rem); 
+    overflow-y: auto;
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    background: var(--card-background);
+}
+#noPopularItemsTable tbody tr {
+    height: 2.5rem;
+}
+
+/* Link style agar warna mengikuti teks biasa sesuai tema */
+.artboard-link,
+.no-popular-link {
+    color: var(--text-color) !important; /* Base color from theme */
+    text-decoration: none !important;
+    cursor: pointer;
+    transition: color 0.15s;
+    font-weight: 500; /* Make links slightly bolder */
+}
+/* Specific hover for these links if needed, but global rule below should cover it */
+/* [data-theme="dark"] .artboard-link,
+[data-theme="dark"] .no-popular-link {
+    color: var(--text-color) !important;
+} */
+/* Removed conflicting hover rules here to allow global hover to apply */
+
+
+/* Universal link style for all clickable judul/produk - already covered by above and global hover */
+/* a.artboard-link,
+a.no-popular-link,
+a:where(.artboard-link, .no-popular-link) { ... } */
+
+
+/* Custom Scrollbar for Webkit browsers */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: var(--background-color); /* Uses theme's background */
+    border-radius: 4px; /* Rounded track */
+}
+::-webkit-scrollbar-thumb {
+    background-color: var(--secondary-color); /* Use secondary color for thumb */
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--primary-color); /* Use primary color on hover */
+}
+
+
+/* New scrollable table class */
+.scrollable-table-wrapper {
+    max-height: 30rem; 
+    overflow-y: auto;
+    border-radius: 6px;
+    border: 1px solid var(--card-border, #ddd);
+    background: var(--card-background, #fff);
+}
+
+/* Global Hover Styles - applied last for higher specificity on common properties */
+button:hover:not(:disabled),
+a:hover,
+.collapsible .collapsible-trigger:hover h2,
+.collapsible .collapsible-trigger:hover .collapsible-icon,
+table tbody tr:hover > td, /* Target td for text color change on row hover */
+.expandable-artboard-row:hover .expand-icon,
+.artboard-link:hover,
+.no-popular-link:hover,
+a:where(.artboard-link, .no-popular-link):hover,
+.modal-close-button:hover,
+.artboard-items-sublist li:hover {
+    color: var(--text-hover-color) !important; /* Use !important cautiously, ensure it's desired */
+    text-decoration: none; /* Personal preference: underline on hover can be distracting */
+}
+
+/* Specific background hover for elements that need it, and border changes */
+button:hover:not(:disabled),
+.collapsible .collapsible-trigger:hover {
+    background-color: var(--bg-hover); /* Only for elements that should change bg */
+    border-color: var(--border-hover); /* Only for elements with borders to change on hover */
+}
+
+/* Table row hover has specific background, so text color is main concern handled above */
+table tbody tr:hover {
+    background-color: var(--table-hover-bg); /* This is specific to table rows */
+    /* Text color for tds inside hovered row is handled by the rule targeting 'table tbody tr:hover > td' */
+}
+
+/* Box shadow for elements that should have it on hover */
+button:hover:not(:disabled),
+.collapsible .collapsible-trigger:hover,
+.stat-card:hover { /* stat-card has its own hover, this would add to it if not careful */
+    box-shadow: 0 2px 8px var(--hover-element-shadow-color); /* General hover shadow */
+}
+
+/* Ensure button hover retains its specific background if different from generic var(--bg-hover) */
+button:hover:not(:disabled) {
+    background-color: var(--primary-color-hover); /* This is more specific for button's bg */
+}
+button.secondary:hover:not(:disabled) {
+    background-color: var(--secondary-color-hover);
+}
+
+/* style.css additions */
+
+/* Chart Layout */
+.chart-row {
+    display: flex;
+    flex-wrap: wrap; /* Memungkinkan chart untuk wrap di layar kecil */
+    gap: 1.5rem;     /* Jarak antar chart dalam satu baris */
+    margin-bottom: 1.5rem; /* Jarak ke chart berikutnya atau konten di bawahnya */
+}
+
+.chart-half-width {
+    flex: 1; /* Setiap chart mengambil ruang yang sama */
+    min-width: 300px; /* Lebar minimum sebelum wrapping */
+}
+
+/* Pastikan chart container di dalam row tidak memiliki margin bawah tambahan */
+.chart-row .chart-container {
+    margin-bottom: 0; 
+}
+
+/* Default chart container height (sudah ada) */
+.chart-container {
+    position: relative;
+    height: 350px; 
+    width: 100%;
+    /* margin-bottom: 1rem; -- Dihapus jika di dalam chart-row, jika tidak bisa dipertahankan */
+}
+
+/* Untuk chart yang mengambil lebar penuh (seperti chart artboard baru) */
+#dataVisualizationContent > .chart-container:not(.chart-half-width) {
+    margin-top: 1.5rem; /* Beri jarak atas jika chart sebelumnya ada dalam .chart-row */
+}
+#dataVisualizationContent > .chart-container:first-child:not(.chart-half-width) {
+    margin-top: 0; /* Tidak perlu margin atas jika ini adalah chart pertama dan bukan bagian dari row */
+}
+
+
+/* Penyesuaian kecil untuk link di dalam modal atau tabel agar konsisten */
+.artboard-link,
+.no-popular-link {
+    color: var(--link-color); /* Gunakan variabel warna link dari tema */
+    text-decoration: underline; /* Garis bawah standar untuk link */
+    font-weight: normal; /* Atau 500 jika ingin sedikit tebal */
+}
+
+.artboard-link:hover,
+.no-popular-link:hover {
+    color: var(--primary-color-hover); /* Warna hover dari tema */
+    text-decoration: none; /* Hapus garis bawah saat hover jika diinginkan */
+}
+
+/* Pastikan global hover tidak menimpa warna link secara berlebihan */
+a:where(.artboard-link, .no-popular-link):hover {
+    color: var(--primary-color-hover) !important; 
+}
+
+/* Responsive adjustments for charts if needed */
+@media (max-width: 768px) {
+    .chart-row {
+        flex-direction: column; /* Stack charts vertically on smaller screens */
+        gap: 1.5rem;
+    }
+    .chart-half-width {
+        min-width: 100%; /* Full width when stacked */
+    }
+    .chart-container {
+        height: 300px; /* Mungkin perlu mengurangi tinggi chart di layar kecil */
+    }
+}
