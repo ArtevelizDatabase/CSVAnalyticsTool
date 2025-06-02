@@ -429,7 +429,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 row.setAttribute('data-item-id', item["Item Id"]);
             }
             row.setAttribute('tabindex', '0');
-            row.addEventListener('click', () => showItemDetailsModal(item["Item Id"])); 
+            row.addEventListener('click', () => showItemDetailsModal(item["Item Id"]));
             row.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' || e.key === ' ') showItemDetailsModal(item["Item Id"]); 
             });
@@ -933,7 +933,6 @@ document.addEventListener('DOMContentLoaded', () => {
         );
     }
 
-    renderFilteredTopPositiveChangeItemsTable(stats);
 
     console.log("CSV Analytics Tool Initialized with enhanced chart features.");
 });

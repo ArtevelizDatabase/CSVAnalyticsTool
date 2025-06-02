@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CSV Analytics Tool - Vanilla JS</title>
+    <title>CSV Analytics Tool</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📊</text></svg>">
 </head>
@@ -20,7 +20,7 @@
 
     <main class="container">
         <section id="csvUploaderSection" class="card" aria-labelledby="csvUploaderHeading">
-            <h2 id="csvUploaderHeading">1. Unggah & Proses CSV</h2>
+            <h2 id="csvUploaderHeading">Unggah & Proses CSV</h2>
             <div class="csv-uploader-container">
                 <label for="csvFile" class="drop-area" id="dropArea">
                     <p>Seret & lepas file CSV di sini, atau klik untuk memilih file.</p>
@@ -33,9 +33,24 @@
             <div id="uploadStatus" role="status" aria-live="polite"></div>
         </section>
 
+        <section id="summaryStatsSection" class="card" aria-labelledby="summaryStatsHeading">
+            <h2 id="summaryStatsHeading">Statistik Ringkasan</h2>
+            <div class="stats-grid" id="statsGridContainer">
+                <div class="stat-card" id="totalItemsCard"><h3>Total Items</h3><p class="stat-value" id="totalItemsValue">-</p><span class="stat-icon">📦</span></div>
+                <div class="stat-card" id="totalEarningsCard"><h3>Total Earnings</h3><p class="stat-value" id="totalEarningsValue">-</p><span class="stat-icon">💰</span></div>
+                <div class="stat-card" id="taxAmountCard"><h3>Tax Amount (15%)</h3><p class="stat-value" id="taxAmountValue">-</p><span class="stat-icon">💸</span></div>
+                <div class="stat-card" id="afterTaxCard">
+                    <h3>After Tax</h3>
+                    <p class="stat-value" id="afterTaxValue">-</p>
+                    <span class="stat-icon">🧾</span>
+                </div>
+                <div class="stat-card" id="categoriesCountCard"><h3>Categories Count</h3><p class="stat-value" id="categoriesCountValue">-</p><span class="stat-icon">🏷️</span></div>
+            </div>
+        </section>
+
         <section id="filterOptionsSection" class="card collapsible" aria-labelledby="filterOptionsHeading">
             <button class="collapsible-trigger" aria-expanded="false" aria-controls="filterOptionsContent">
-                <h2 id="filterOptionsHeading">2. Opsi Filter (Klik untuk Buka/Tutup)</h2>
+                <h2 id="filterOptionsHeading">Filter Setting</h2>
                 <span class="collapsible-icon">+</span>
             </button>
             <div id="filterOptionsContent" class="collapsible-content">
@@ -64,50 +79,11 @@
             </div>
         </section>
 
-        <section id="interactiveTableSection" class="card collapsible" aria-labelledby="interactiveTableHeading">
-            <button class="collapsible-trigger" aria-expanded="true" aria-controls="interactiveTableContent">
-                <h2 id="interactiveTableHeading">3. Tabel Data Interaktif (Klik untuk Buka/Tutup)</h2>
-                <span class="collapsible-icon">-</span>
-            </button>
-            <div id="interactiveTableContent" class="collapsible-content expanded">
-                <div class="table-controls">
-                    <label for="itemsPerPage">Item per Halaman:</label>
-                    <select id="itemsPerPage">
-                        <option value="10">10</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                    </select>
-                </div>
-                <div class="table-wrapper">
-                    <table id="interactiveDataTable">
-                        <thead></thead>
-                        <tbody id="dataTableBody"></tbody>
-                    </table>
-                </div>
-                <div id="tableStatus" role="status" aria-live="polite"></div>
-                <div id="paginationContainer" role="navigation" aria-label="Pagination"></div>
-            </div>
-        </section>
 
-        <section id="summaryStatsSection" class="card" aria-labelledby="summaryStatsHeading">
-            <h2 id="summaryStatsHeading">4. Statistik Ringkasan</h2>
-            <div class="stats-grid" id="statsGridContainer">
-                <div class="stat-card" id="totalItemsCard"><h3>Total Items</h3><p class="stat-value" id="totalItemsValue">-</p><span class="stat-icon">📦</span></div>
-                <div class="stat-card" id="totalEarningsCard"><h3>Total Earnings</h3><p class="stat-value" id="totalEarningsValue">-</p><span class="stat-icon">💰</span></div>
-                <div class="stat-card" id="taxAmountCard"><h3>Tax Amount (15%)</h3><p class="stat-value" id="taxAmountValue">-</p><span class="stat-icon">💸</span></div>
-                <div class="stat-card" id="afterTaxCard">
-                    <h3>After Tax</h3>
-                    <p class="stat-value" id="afterTaxValue">-</p>
-                    <span class="stat-icon">🧾</span>
-                </div>
-                <div class="stat-card" id="categoriesCountCard"><h3>Categories Count</h3><p class="stat-value" id="categoriesCountValue">-</p><span class="stat-icon">🏷️</span></div>
-            </div>
-        </section>
 
         <section id="dataVisualizationSection" class="card collapsible" aria-labelledby="dataVisualizationHeading">
             <button class="collapsible-trigger" aria-expanded="false" aria-controls="dataVisualizationContent">
-                <h2 id="dataVisualizationHeading">5. Visualisasi Data (Klik untuk Buka/Tutup)</h2>
+                <h2 id="dataVisualizationHeading">Visualisasi Data</h2>
                 <span class="collapsible-icon">+</span>
             </button>
             <div id="dataVisualizationContent" class="collapsible-content">
@@ -138,7 +114,7 @@
 
         <section id="advancedAnalyticsSection" class="card collapsible" aria-labelledby="advancedAnalyticsHeading">
             <button class="collapsible-trigger" aria-expanded="false" aria-controls="advancedAnalyticsContent">
-                <h2 id="advancedAnalyticsHeading">6. Analytics Lanjutan (Klik untuk Buka/Tutup)</h2>
+                <h2 id="advancedAnalyticsHeading">Analytics Lanjutan</h2>
                 <span class="collapsible-icon">+</span>
             </button>
             <div id="advancedAnalyticsContent" class="collapsible-content">
@@ -231,8 +207,34 @@
             </div>
         </section>
 
+        <section id="interactiveTableSection" class="card collapsible" aria-labelledby="interactiveTableHeading">
+            <button class="collapsible-trigger" aria-expanded="true" aria-controls="interactiveTableContent">
+                <h2 id="interactiveTableHeading">Tabel Data Interaktif</h2>
+                <span class="collapsible-icon">-</span>
+            </button>
+            <div id="interactiveTableContent" class="collapsible-content expanded">
+                <div class="table-controls">
+                    <label for="itemsPerPage">Item per Halaman:</label>
+                    <select id="itemsPerPage">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                </div>
+                <div class="table-wrapper">
+                    <table id="interactiveDataTable">
+                        <thead></thead>
+                        <tbody id="dataTableBody"></tbody>
+                    </table>
+                </div>
+                <div id="tableStatus" role="status" aria-live="polite"></div>
+                <div id="paginationContainer" role="navigation" aria-label="Pagination"></div>
+            </div>
+        </section>
+
         <section id="dataExportSection" class="card" aria-labelledby="dataExportHeading">
-            <h2 id="dataExportHeading">7. Ekspor Data</h2>
+            <h2 id="dataExportHeading">Ekspor Data</h2>
             <div class="export-options">
                 <label for="exportType">Pilih tipe data untuk diekspor:</label>
                 <select id="exportType">
@@ -250,7 +252,7 @@
 
     </main>
 
-    <div id="itemDetailsModal" class="modal" role="dialog" aria-labelledby="modalTitle" aria-modal="true">
+    <div id="itemDetailsModal" class="modal" role="dialog" aria-labelledby="modalTitle" aria-modal="true" style="display: none;">
         <div class="modal-content">
             <button id="closeModalButton" class="modal-close-button" aria-label="Close Modal">&times;</button>
             <h3 id="modalTitle">Detail Item</h3>
@@ -264,7 +266,7 @@
 
     <footer>
         <div class="container">
-            <p>&copy; <span id="currentYear"></span> CSV Analytics Tool. Dibuat dengan Vanilla JS.</p>
+            <p>&copy; <span id="currentYear"></span> CSV Analytics Tool. by ArtevelizSTD</p>
         </div>
     </footer>
 
