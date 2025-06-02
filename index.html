@@ -11,9 +11,9 @@
     <header>
         <div class="container header-content">
             <h1>CSV Analytics Tool</h1>
-            <button id="themeToggle" aria-label="Toggle Light/Dark Theme">
+            <button type="button" id="themeToggle" aria-label="Toggle Light/Dark Theme">
                 <span class="icon-sun">☀️</span>
-                <span class="icon-moon" style="display:none;">🌙</span>
+                <span class="icon-moon">🌙</span>
             </button>
         </div>
     </header>
@@ -119,7 +119,18 @@
                         <canvas id="categoryDistributionChart" aria-label="Category Earnings Distribution Chart" role="img"></canvas>
                     </div>
                 </div>
-                <div class="chart-container" style="margin-top: 2rem;">
+                <div class="chart-row">
+                    <div class="chart-container chart-half-width">
+                        <canvas id="monthlyEarningsTrendChart" aria-label="Monthly Total Earnings Trend Chart" role="img"></canvas>
+                    </div>
+                    <div class="chart-container chart-half-width">
+                        <canvas id="itemPublicationTrendChart" aria-label="Monthly Item Publication Count Chart" role="img"></canvas>
+                    </div>
+                </div>
+                <div class="chart-container chart-margin-top">
+                    <canvas id="avgEarningsChangeByCategoryChart" aria-label="Average Earnings Change per Category Chart" role="img"></canvas>
+                </div>
+                <div class="chart-container chart-margin-top">
                     <canvas id="topArtboardsChart" aria-label="Top Artboards by Earnings Chart" role="img"></canvas>
                 </div>
             </div>
@@ -149,7 +160,6 @@
                     </div>
                 </div>
 
-
                 <div class="analysis-block">
                     <h3>Top 30 Performing Items (Berdasarkan Total Pendapatan Keseluruhan)</h3>
                     <div class="scrollable-table-wrapper sticky-header-table">
@@ -167,8 +177,6 @@
                     </div>
                 </div>
 
-
-
                 <div class="analysis-block">
                     <h3>Top 30 Item dengan Kenaikan Pendapatan Tertinggi</h3>
                     <div class="scrollable-table-wrapper">
@@ -185,8 +193,6 @@
                         </table>
                     </div>
                 </div>
-
-
 
                 <div class="analysis-block">
                     <h3>Top Artboard/Keyword (Berdasarkan Total Pendapatan)</h3>
@@ -244,14 +250,14 @@
 
     </main>
 
-    <div id="itemDetailsModal" class="modal" role="dialog" aria-labelledby="modalTitle" aria-modal="true" style="display:none;">
+    <div id="itemDetailsModal" class="modal" role="dialog" aria-labelledby="modalTitle" aria-modal="true">
         <div class="modal-content">
             <button id="closeModalButton" class="modal-close-button" aria-label="Close Modal">&times;</button>
             <h3 id="modalTitle">Detail Item</h3>
             <div id="modalBody" class="modal-body"></div>
         </div>
     </div>
-    <div id="loadingOverlay" class="loading-overlay" style="display:none;" role="alert" aria-live="assertive">
+    <div id="loadingOverlay" class="loading-overlay hidden" role="alert" aria-live="assertive">
         <div class="spinner"></div>
         <p>Memproses...</p>
     </div>

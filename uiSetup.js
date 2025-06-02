@@ -45,7 +45,10 @@ function getDOMElements() {
         modalBody: document.getElementById('modalBody'),
         yearlyEarningsChartCanvas: document.getElementById('yearlyEarningsChart'),
         categoryDistributionChartCanvas: document.getElementById('categoryDistributionChart'),
-        topArtboardsChartCanvas: document.getElementById('topArtboardsChart'), // Added new chart canvas
+        topArtboardsChartCanvas: document.getElementById('topArtboardsChart'),
+        monthlyEarningsTrendChartCanvas: document.getElementById('monthlyEarningsTrendChart'), // New
+        itemPublicationTrendChartCanvas: document.getElementById('itemPublicationTrendChart'), // New
+        avgEarningsChangeByCategoryChartCanvas: document.getElementById('avgEarningsChangeByCategoryChart'), // New
         currentYearSpan: document.getElementById('currentYear'),
         filterOptionsSectionTrigger: document.querySelector('#filterOptionsSection .collapsible-trigger'),
         collapsibleTriggers: document.querySelectorAll('.collapsible-trigger'),

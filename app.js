@@ -12,7 +12,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     let yearlyEarningsChartInstance = null;
     let categoryDistributionChartInstance = null;
-    let topArtboardsChartInstance = null; // Added instance for the new chart
+    let topArtboardsChartInstance = null;
+    let monthlyEarningsTrendChartInstance = null; // New
+    let itemPublicationTrendChartInstance = null; // New
+    let avgEarningsChangeByCategoryChartInstance = null; // New
     
     const REQUIRED_COLUMNS = ["Item Id", "Category", "Title", "Published Date", "Total Earnings ($USD)", "Earnings Change"];
 
@@ -29,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupModalEventListeners(elements, closeModalHandler); 
     if(elements.currentYearSpan) elements.currentYearSpan.textContent = new Date().getFullYear();
     setupTableHeader(); 
-    updateAllVisualizations();
+    updateAllVisualizations(); // Initial call with empty data
 
     function setupCsvUploadEvents() {
         if (!elements.dropArea || !elements.csvFileInput) return;
@@ -224,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         link.textContent = value || '-';
                         link.target = "_blank";
                         link.rel = "noopener noreferrer";
-                        link.className = 'artboard-link'; // Class for consistent styling
+                        link.className = 'artboard-link'; 
                         cell.appendChild(link);
                     } else {
                         cell.textContent = value || '-';
@@ -307,7 +310,7 @@ document.addEventListener('DOMContentLoaded', () => {
             row.addEventListener('click', () => {
                 const isHidden = subRow.style.display === 'none';
                 subRow.style.display = isHidden ? '' : 'none';
-                expandIcon.textContent = isHidden ? '►' : '▼';
+                expandIcon.textContent = isHidden ? '▼' : '►'; // Icon changes on expand/collapse
             });
         });
     }
@@ -319,7 +322,7 @@ document.addEventListener('DOMContentLoaded', () => {
             elements.taxAmountValue.textContent = `$${stats.taxAmount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
         }
         if(elements.afterTaxValue) {
-            const afterTax = stats.totalEarnings * 0.85;
+            const afterTax = stats.totalEarnings * 0.85; // Assuming 15% tax
             elements.afterTaxValue.textContent = `$${afterTax.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
         }
         if(elements.categoriesCountValue) elements.categoriesCountValue.textContent = stats.categoriesCount.toLocaleString();
@@ -352,7 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const totalRow = document.createElement('tr');
             totalRow.style.fontWeight = 'bold';
-            totalRow.style.background = 'var(--card-border, #f0f0f0)'; // Use CSS variable
+            totalRow.style.background = 'var(--card-border, #f0f0f0)'; 
             totalRow.innerHTML = `
                 <td colspan="2" style="text-align:left;">Total Seluruh Kategori</td>
                 <td>$${totalEarningsVal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
@@ -371,7 +374,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
         if (elements.topArtboardsTableBody) { 
-            renderExpandableTopArtboardsTable(elements.topArtboardsTableBody, stats.topArtboardsByEarnings, "Tidak ada data artboard/keyword yang ditemukan.", 20); 
+            renderExpandableTopArtboardsTable(elements.topArtboardsTableBody, stats.topArtboardsByEarnings, "Tidak ada data artboard/keyword yang ditemukan."); 
         }
 
         if (elements.noPopularItemsTableBody) {
@@ -554,9 +557,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderChartsUI(stats) {
+        const allChartCanvases = [
+            elements.yearlyEarningsChartCanvas, 
+            elements.categoryDistributionChartCanvas, 
+            elements.topArtboardsChartCanvas,
+            elements.monthlyEarningsTrendChartCanvas,
+            elements.itemPublicationTrendChartCanvas,
+            elements.avgEarningsChangeByCategoryChartCanvas
+        ];
+
         if (typeof Chart === 'undefined' || typeof Chart !== 'function') {
             console.warn("Chart.js is not loaded or not a constructor.");
-            [elements.yearlyEarningsChartCanvas, elements.categoryDistributionChartCanvas, elements.topArtboardsChartCanvas].forEach(canvas => {
+            allChartCanvases.forEach(canvas => {
                 if (canvas && canvas.parentElement) {
                     let pError = canvas.parentElement.querySelector('p.chart-error-message');
                     if (!pError) {
@@ -570,7 +582,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             return;
         } else {
-             [elements.yearlyEarningsChartCanvas, elements.categoryDistributionChartCanvas, elements.topArtboardsChartCanvas].forEach(canvas => {
+             allChartCanvases.forEach(canvas => {
                 if (canvas && canvas.parentElement) {
                     const pError = canvas.parentElement.querySelector('p.chart-error-message');
                     if (pError) pError.remove();
@@ -579,12 +591,15 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
+        // Destroy existing chart instances
         if (yearlyEarningsChartInstance) yearlyEarningsChartInstance.destroy();
         if (categoryDistributionChartInstance) categoryDistributionChartInstance.destroy();
-        if (topArtboardsChartInstance) topArtboardsChartInstance.destroy(); // Destroy new chart instance
+        if (topArtboardsChartInstance) topArtboardsChartInstance.destroy();
+        if (monthlyEarningsTrendChartInstance) monthlyEarningsTrendChartInstance.destroy();
+        if (itemPublicationTrendChartInstance) itemPublicationTrendChartInstance.destroy();
+        if (avgEarningsChangeByCategoryChartInstance) avgEarningsChangeByCategoryChartInstance.destroy();
 
-        if (!elements.yearlyEarningsChartCanvas || !elements.categoryDistributionChartCanvas || !elements.topArtboardsChartCanvas) return;
-        
+        // Helper to display "No Data" message on a canvas
         const noDataForChart = (canvas) => {
             if (!canvas) return;
             const ctx = canvas.getContext('2d');
@@ -598,8 +613,8 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.restore();
         };
 
-        // Yearly Earnings Chart
-        if (stats && stats.yearlyEarnings && Object.keys(stats.yearlyEarnings).length > 0) {
+        // --- Yearly Earnings Chart ---
+        if (elements.yearlyEarningsChartCanvas && stats && stats.yearlyEarnings && Object.keys(stats.yearlyEarnings).length > 0) {
             const yearlyCtx = elements.yearlyEarningsChartCanvas.getContext('2d');
             yearlyEarningsChartInstance = new Chart(yearlyCtx, {
                 type: 'bar',
@@ -619,8 +634,8 @@ document.addEventListener('DOMContentLoaded', () => {
             noDataForChart(elements.yearlyEarningsChartCanvas);
         }
 
-        // Category Distribution Chart
-        if (stats && stats.categoryPerformance && stats.categoryPerformance.length > 0) {
+        // --- Category Distribution Chart ---
+        if (elements.categoryDistributionChartCanvas && stats && stats.categoryPerformance && stats.categoryPerformance.length > 0) {
             const categoryCtx = elements.categoryDistributionChartCanvas.getContext('2d');
             const categoryLabels = stats.categoryPerformance.map(cat => cat.name);
             const categoryEarningsData = stats.categoryPerformance.map(cat => cat.totalEarnings);
@@ -638,64 +653,143 @@ document.addEventListener('DOMContentLoaded', () => {
             noDataForChart(elements.categoryDistributionChartCanvas);
         }
 
-        // Top Artboards/Keywords by Earnings Chart
-        if (stats && stats.topArtboardsByEarnings && stats.topArtboardsByEarnings.length > 0) {
+        // --- Monthly Total Earnings Trend Chart ---
+        if (elements.monthlyEarningsTrendChartCanvas && stats && stats.monthlyEarnings && Object.keys(stats.monthlyEarnings).length > 0) {
+            const monthlyCtx = elements.monthlyEarningsTrendChartCanvas.getContext('2d');
+            const sortedMonths = Object.keys(stats.monthlyEarnings).sort();
+            monthlyEarningsTrendChartInstance = new Chart(monthlyCtx, {
+                type: 'line',
+                data: {
+                    labels: sortedMonths,
+                    datasets: [{
+                        label: 'Total Earnings Bulanan ($USD)',
+                        data: sortedMonths.map(month => stats.monthlyEarnings[month]),
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        fill: true,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true, ticks: { callback: value => '$' + value.toLocaleString() } }, x: { ticks: { autoSkip: true, maxTicksLimit: 12 } } },
+                    plugins: { legend: { display: true }, title: { display: true, text: 'Trend Pendapatan Total Bulanan' } }
+                }
+            });
+        } else if (elements.monthlyEarningsTrendChartCanvas) {
+            noDataForChart(elements.monthlyEarningsTrendChartCanvas);
+        }
+        
+        // --- Item Publication Trend Chart ---
+        if (elements.itemPublicationTrendChartCanvas && stats && stats.monthlyPublicationCounts && Object.keys(stats.monthlyPublicationCounts).length > 0) {
+            const pubCtx = elements.itemPublicationTrendChartCanvas.getContext('2d');
+            const sortedPubMonths = Object.keys(stats.monthlyPublicationCounts).sort();
+            itemPublicationTrendChartInstance = new Chart(pubCtx, {
+                type: 'bar',
+                data: {
+                    labels: sortedPubMonths,
+                    datasets: [{
+                        label: 'Jumlah Item Dipublikasikan',
+                        data: sortedPubMonths.map(month => stats.monthlyPublicationCounts[month]),
+                        backgroundColor: 'rgba(255, 159, 64, 0.7)',
+                        borderColor: 'rgba(255, 159, 64, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } }, x: { ticks: { autoSkip: true, maxTicksLimit: 12 } } },
+                    plugins: { legend: { display: true }, title: { display: true, text: 'Trend Publikasi Item Bulanan' } }
+                }
+            });
+        } else if (elements.itemPublicationTrendChartCanvas) {
+            noDataForChart(elements.itemPublicationTrendChartCanvas);
+        }
+
+        // --- Average Earnings Change per Category Chart ---
+        if (elements.avgEarningsChangeByCategoryChartCanvas && stats && stats.avgEarningsChangePerCategory && stats.avgEarningsChangePerCategory.length > 0) {
+            const avgChangeCtx = elements.avgEarningsChangeByCategoryChartCanvas.getContext('2d');
+            const avgChangeLabels = stats.avgEarningsChangePerCategory.map(cat => cat.name);
+            const avgChangeData = stats.avgEarningsChangePerCategory.map(cat => cat.avgChange);
+            const avgChangeColors = avgChangeLabels.map((_, i) => `hsl(${((i * 360 / (avgChangeLabels.length || 1)) + 90) % 360}, 70%, 65%)`);
+            
+            // Dynamic height for horizontal bar chart
+            const barHeight = 30; // pixels per bar
+            const padding = 80; // for title, legend, axes
+            const dynamicHeight = Math.max(300, Math.min(avgChangeLabels.length * barHeight + padding, 1200));
+            elements.avgEarningsChangeByCategoryChartCanvas.parentElement.classList.add('horizontal-bar-dynamic-height'); // Add class for CSS
+            elements.avgEarningsChangeByCategoryChartCanvas.height = dynamicHeight;
+
+
+            avgEarningsChangeByCategoryChartInstance = new Chart(avgChangeCtx, {
+                type: 'bar',
+                data: {
+                    labels: avgChangeLabels,
+                    datasets: [{
+                        label: 'Rata-rata Perubahan Pendapatan ($USD)',
+                        data: avgChangeData,
+                        backgroundColor: avgChangeColors,
+                        borderColor: avgChangeColors.map(c => c.replace('0.65', '1')),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y', // Horizontal bar chart
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { beginAtZero: true, ticks: { callback: value => '$' + value.toLocaleString() } },
+                        y: { ticks: { autoSkip: false } } // Show all category labels
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        title: { display: true, text: 'Rata-rata Perubahan Pendapatan per Kategori' },
+                        tooltip: { callbacks: { label: function(context) { let label = context.dataset.label || ''; if (label) label += ': '; if (context.parsed.x !== null) label += '$' + context.parsed.x.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}); return label; } } }
+                    }
+                }
+            });
+        } else if (elements.avgEarningsChangeByCategoryChartCanvas) {
+            elements.avgEarningsChangeByCategoryChartCanvas.parentElement.classList.remove('horizontal-bar-dynamic-height');
+            noDataForChart(elements.avgEarningsChangeByCategoryChartCanvas);
+        }
+
+
+        // --- Top Artboards/Keywords by Earnings Chart ---
+        if (elements.topArtboardsChartCanvas && stats && stats.topArtboardsByEarnings && stats.topArtboardsByEarnings.length > 0) {
             const topArtboardsCtx = elements.topArtboardsChartCanvas.getContext('2d');
-            const topNArtboards = stats.topArtboardsByEarnings.slice(0, 15); // Show top 15
+            const topNArtboards = stats.topArtboardsByEarnings; 
             const artboardLabels = topNArtboards.map(ab => ab.keyword);
+
+            const dynamicHeightArtboards = Math.max(400, Math.min(artboardLabels.length * 35 + 80, 1200)); // 35px per bar + padding
+            elements.topArtboardsChartCanvas.height = dynamicHeightArtboards;
+
             const artboardEarningsData = topNArtboards.map(ab => ab.totalEarnings);
-            // Generate slightly different colors from category chart
             const artboardColors = artboardLabels.map((_, i) => `hsl(${((i * 360 / (artboardLabels.length || 1)) + 45) % 360}, 65%, 65%)`);
 
             topArtboardsChartInstance = new Chart(topArtboardsCtx, {
-                type: 'bar', // Horizontal bar chart
+                type: 'bar', 
                 data: {
                     labels: artboardLabels,
                     datasets: [{
                         label: 'Total Earnings ($USD)',
                         data: artboardEarningsData,
                         backgroundColor: artboardColors,
-                        borderColor: artboardColors.map(color => color.replace('0.65', '1')), // Darker border
-                        borderWidth: 1
+                        borderColor: artboardColors.map(color => color.replace('0.65', '1')),
+                        borderWidth: 1,
+                        borderRadius: 4 
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    indexAxis: 'y', // This makes it a horizontal bar chart
                     scales: {
-                        x: { // For horizontal bar, 'x' is the value axis
-                            beginAtZero: true,
-                            ticks: { 
-                                callback: value => '$' + value.toLocaleString() 
-                            }
-                        },
-                        y: { // For horizontal bar, 'y' is the category axis
-                           ticks: {
-                                autoSkip: false // Ensure all labels are shown if possible
-                           }
-                        }
+                        y: { beginAtZero: true, ticks: { callback: value => '$' + value.toLocaleString() } },
+                        x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 0 } } // Allow rotation if labels are long
                     },
                     plugins: {
-                        legend: {
-                            display: false // Legend might be redundant for a single dataset bar chart
-                        },
-                        title: {
-                            display: true,
-                            text: 'Top 15 Artboards/Keywords by Earnings'
-                        },
-                        tooltip: {
-                             callbacks: { 
-                                label: function(context) { 
-                                    let label = context.dataset.label || ''; 
-                                    if (label) label += ': '; 
-                                    if (context.parsed.x !== null) { // Use .x for horizontal bar
-                                        label += '$' + context.parsed.x.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}); 
-                                    }
-                                    return label; 
-                                } 
-                            } 
-                        }
+                        legend: { display: false },
+                        title: { display: true, text: 'Top Artboards/Keywords by Earnings' },
+                        tooltip: { callbacks: { label: function(context) { let label = context.dataset.label || ''; if (label) label += ': '; if (context.parsed.y !== null) { label += '$' + context.parsed.y.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}); } return label; } } }
                     }
                 }
             });
@@ -804,7 +898,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 link.textContent = item.Title || '-';
                 link.target = "_blank";
                 link.rel = "noopener noreferrer";
-                link.className = 'no-popular-link'; // Class for consistent styling
+                link.className = 'no-popular-link artboard-link'; // Ensure consistent link styling
                 titleCell.appendChild(link);
             } else {
                 titleCell.textContent = item.Title || '-';
@@ -815,5 +909,31 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    console.log("CSV Analytics Tool Initialized with new chart features.");
+    function renderFilteredTopPositiveChangeItemsTable(stats) {
+        const select = document.getElementById('topPositiveChangeItemsCategoryFilter');
+        const selectedCategory = select ? select.value : "";
+
+        let filteredItems = stats.topPositiveChangeItems;
+        if (selectedCategory) {
+            filteredItems = stats.topPositiveChangeItems.filter(item =>
+                (item.Category || "").toLowerCase() === selectedCategory
+            );
+        }
+        renderGenericTable(
+            elements.topPositiveChangeItemsTableBody,
+            filteredItems,
+            [
+                { isIndex: true },
+                { key: "Title" },
+                { key: "Category" },
+                { key: "Earnings Change", formatter: val => `$${(val || 0).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}` }
+            ],
+            "Tidak ada item dengan kenaikan pendapatan positif.",
+            30
+        );
+    }
+
+    renderFilteredTopPositiveChangeItemsTable(stats);
+
+    console.log("CSV Analytics Tool Initialized with enhanced chart features.");
 });

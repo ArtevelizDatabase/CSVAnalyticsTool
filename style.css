@@ -288,7 +288,7 @@ button.secondary:hover:not(:disabled) {
     opacity: 0;
 }
 .collapsible-content.expanded {
-    max-height: 7000px; 
+    max-height: 7000px; /* Increased to accommodate more charts */
     padding-top: 1rem;
     padding-bottom: 1rem;
     opacity: 1;
@@ -637,7 +637,7 @@ footer {
     position: relative;
     height: 350px; 
     width: 100%;
-    margin-bottom: 1rem;
+    margin-bottom: 1rem; /* Default margin, can be overridden by .chart-row */
 }
 .chart-container p.chart-error-message,
 .chart-container canvas + p { 
@@ -695,7 +695,6 @@ footer {
     background-color: #f2dede; /* Light red bg */
     border-color: #ebcccc; /* Light red border */
     color: #a94442;        /* Dark red text */
-    opacity: 1;
 }
 
 [data-theme="dark"] .status-message.info {
@@ -727,28 +726,29 @@ footer {
     height: 2.5rem;
 }
 
-/* Link style agar warna mengikuti teks biasa sesuai tema */
-.artboard-link,
-.no-popular-link {
-    color: var(--text-color) !important; /* Base color from theme */
+/* Link style: no underline, color follows theme */
+a, a:visited, a:active, .artboard-link, .no-popular-link {
     text-decoration: none !important;
-    cursor: pointer;
-    transition: color 0.15s;
-    font-weight: 500; /* Make links slightly bolder */
-}
-/* Specific hover for these links if needed, but global rule below should cover it */
-/* [data-theme="dark"] .artboard-link,
-[data-theme="dark"] .no-popular-link {
     color: var(--text-color) !important;
-} */
-/* Removed conflicting hover rules here to allow global hover to apply */
+    transition: color 0.15s;
+}
 
+a:hover, .artboard-link:hover, .no-popular-link:hover {
+    color: var(--text-hover-color, var(--primary-color));
+    text-decoration: underline;
+}
 
-/* Universal link style for all clickable judul/produk - already covered by above and global hover */
-/* a.artboard-link,
-a.no-popular-link,
-a:where(.artboard-link, .no-popular-link) { ... } */
+[data-theme="dark"] a,
+[data-theme="dark"] .artboard-link,
+[data-theme="dark"] .no-popular-link {
+    color: #fff !important;
+}
 
+[data-theme="light"] a,
+[data-theme="light"] .artboard-link,
+[data-theme="light"] .no-popular-link {
+    color: #111 !important;
+}
 
 /* Custom Scrollbar for Webkit browsers */
 ::-webkit-scrollbar {
@@ -778,23 +778,23 @@ a:where(.artboard-link, .no-popular-link) { ... } */
 }
 
 /* Global Hover Styles - applied last for higher specificity on common properties */
+/* Note: Link hover behavior is now more specifically controlled by .artboard-link:hover etc. */
 button:hover:not(:disabled),
-a:hover,
 .collapsible .collapsible-trigger:hover h2,
 .collapsible .collapsible-trigger:hover .collapsible-icon,
 table tbody tr:hover > td, /* Target td for text color change on row hover */
 .expandable-artboard-row:hover .expand-icon,
-.artboard-link:hover,
-.no-popular-link:hover,
-a:where(.artboard-link, .no-popular-link):hover,
+/* .artboard-link:hover, -- Handled by specific rule */
+/* .no-popular-link:hover, -- Handled by specific rule */
 .modal-close-button:hover,
 .artboard-items-sublist li:hover {
-    color: var(--text-hover-color) !important; /* Use !important cautiously, ensure it's desired */
-    text-decoration: none; /* Personal preference: underline on hover can be distracting */
+    color: var(--text-hover-color) !important; 
+    text-decoration: none; 
 }
 
+
 /* Specific background hover for elements that need it, and border changes */
-button:hover:not(:disabled),
+/* .collapsible .collapsible-trigger:hover is already defined, this might be redundant or for broader scope */
 .collapsible .collapsible-trigger:hover {
     background-color: var(--bg-hover); /* Only for elements that should change bg */
     border-color: var(--border-hover); /* Only for elements with borders to change on hover */
@@ -803,13 +803,11 @@ button:hover:not(:disabled),
 /* Table row hover has specific background, so text color is main concern handled above */
 table tbody tr:hover {
     background-color: var(--table-hover-bg); /* This is specific to table rows */
-    /* Text color for tds inside hovered row is handled by the rule targeting 'table tbody tr:hover > td' */
 }
 
 /* Box shadow for elements that should have it on hover */
-button:hover:not(:disabled),
-.collapsible .collapsible-trigger:hover,
-.stat-card:hover { /* stat-card has its own hover, this would add to it if not careful */
+.collapsible .collapsible-trigger:hover, /* Removed button as it's handled */
+.stat-card:hover { 
     box-shadow: 0 2px 8px var(--hover-element-shadow-color); /* General hover shadow */
 }
 
@@ -821,72 +819,78 @@ button.secondary:hover:not(:disabled) {
     background-color: var(--secondary-color-hover);
 }
 
-/* style.css additions */
+/* style.css additions for chart layout */
 
-/* Chart Layout */
 .chart-row {
     display: flex;
-    flex-wrap: wrap; /* Memungkinkan chart untuk wrap di layar kecil */
-    gap: 1.5rem;     /* Jarak antar chart dalam satu baris */
-    margin-bottom: 1.5rem; /* Jarak ke chart berikutnya atau konten di bawahnya */
+    flex-wrap: wrap; 
+    gap: 1.5rem;     
+    margin-bottom: 1.5rem; 
 }
 
 .chart-half-width {
-    flex: 1; /* Setiap chart mengambil ruang yang sama */
-    min-width: 300px; /* Lebar minimum sebelum wrapping */
+    flex: 1; 
+    min-width: 300px; 
 }
 
-/* Pastikan chart container di dalam row tidak memiliki margin bawah tambahan */
 .chart-row .chart-container {
     margin-bottom: 0; 
 }
 
-/* Default chart container height (sudah ada) */
+/* Default chart container height (already exists, slightly adjusted) */
 .chart-container {
     position: relative;
-    height: 350px; 
+    height: 380px; /* Slightly increased default height for better label visibility */
     width: 100%;
-    /* margin-bottom: 1rem; -- Dihapus jika di dalam chart-row, jika tidak bisa dipertahankan */
 }
 
-/* Untuk chart yang mengambil lebar penuh (seperti chart artboard baru) */
 #dataVisualizationContent > .chart-container:not(.chart-half-width) {
-    margin-top: 1.5rem; /* Beri jarak atas jika chart sebelumnya ada dalam .chart-row */
+    margin-top: 1.5rem; 
 }
 #dataVisualizationContent > .chart-container:first-child:not(.chart-half-width) {
-    margin-top: 0; /* Tidak perlu margin atas jika ini adalah chart pertama dan bukan bagian dari row */
+    margin-top: 0; 
+}
+
+/* Specific style for horizontal bar chart container to allow dynamic height */
+.chart-container.horizontal-bar-dynamic-height {
+    height: auto; /* Allow container to size based on content (chart's dynamic height) */
+    min-height: 300px; /* Set a minimum height */
+    max-height: 1200px; /* Set a maximum height */
+    overflow-y: auto; /* If content exceeds max-height, allow scroll */
 }
 
 
-/* Penyesuaian kecil untuk link di dalam modal atau tabel agar konsisten */
-.artboard-link,
-.no-popular-link {
-    color: var(--link-color); /* Gunakan variabel warna link dari tema */
-    text-decoration: underline; /* Garis bawah standar untuk link */
-    font-weight: normal; /* Atau 500 jika ingin sedikit tebal */
-}
-
-.artboard-link:hover,
-.no-popular-link:hover {
-    color: var(--primary-color-hover); /* Warna hover dari tema */
-    text-decoration: none; /* Hapus garis bawah saat hover jika diinginkan */
-}
-
-/* Pastikan global hover tidak menimpa warna link secara berlebihan */
-a:where(.artboard-link, .no-popular-link):hover {
-    color: var(--primary-color-hover) !important; 
-}
-
-/* Responsive adjustments for charts if needed */
+/* Responsive adjustments for charts */
 @media (max-width: 768px) {
     .chart-row {
-        flex-direction: column; /* Stack charts vertically on smaller screens */
+        flex-direction: column; 
         gap: 1.5rem;
     }
     .chart-half-width {
-        min-width: 100%; /* Full width when stacked */
+        min-width: 100%; 
     }
     .chart-container {
-        height: 300px; /* Mungkin perlu mengurangi tinggi chart di layar kecil */
+        height: 320px; 
     }
+    /* Ensure dynamic height horizontal bar chart still behaves */
+    .chart-container.horizontal-bar-dynamic-height {
+        height: auto;
+        min-height: 250px;
+        max-height: 800px;
+    }
+}
+
+/* Margin top khusus chart di visualisasi */
+.chart-margin-top {
+    margin-top: 2rem;
+}
+
+/* Margin bawah untuk filter dropdown */
+.filter-margin-bottom {
+    margin-bottom: 1rem;
+}
+
+/* Sembunyikan elemen (ganti style="display:none;") */
+.hidden {
+    display: none !important;
 }
